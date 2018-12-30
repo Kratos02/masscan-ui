@@ -1,1 +1,1 @@
-TOTAL_IP_COUNTS = 'Total of IP found: {:,}'
+TOTAL_IP_COUNTS = 'TOTAL OF IP FOUND: {:,}'

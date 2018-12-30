@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 import argparse
+import os.path
 import sys
+
+import configparser
 
 from helpers.functions import get_url_from_name, get_ip_blocks_from_xmyip, count_ip_address
 from labels import *
 
+CONFIG_FILE = 'settings.ini'
 XMyIP_DOMAIN = 'www.xmyip.com'
 
 
@@ -12,8 +16,21 @@ def should_continue(blocks, total):
     return total != 0
 
 
+def validate_settings(config):
+    return os.path.exists(config['DEFAULT']['masscan']) and config['DEFAULT']['masscan'] > 0
+
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='PyCaribbean')
+    config = configparser.ConfigParser()
+    config.read('settings.ini')
+
+    if not validate_settings(config):
+        print "Settings are not valid."
+        sys.exit(-1)
+
+    masscan = config['DEFAULT']['masscan']
+
+    parser = argparse.ArgumentParser(description='Mass scanning a whole country.')
     parser.add_argument('--country', help='Country')
 
     args = parser.parse_args()
