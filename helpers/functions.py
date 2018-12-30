@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 
 def get_url_from_name(domain, country):
-    return 'https://{}/ip-addresses/{}'.format(domain, country)
+    return 'https://{}/ip-addresses/{}'.format(domain, country.replace(' ','--').lower())
 
 
 def extract_ip_range(cells):
