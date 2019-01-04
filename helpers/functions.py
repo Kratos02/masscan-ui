@@ -1,10 +1,11 @@
+import tempfile
 import urllib2
 
-from bs4 import BeautifulSoup
+import csv
 
 
 def get_url_from_name(domain, country):
-    return 'https://{}/ip-addresses/{}'.format(domain, country.replace(' ','--').lower())
+    return 'http://{}/countryip/{}.csv'.format(domain, country.lower())
 
 
 def extract_ip_range(cells):
@@ -12,6 +13,9 @@ def extract_ip_range(cells):
 
 
 def generate_ip_range(start_ip, end_ip):
+    # written by Tihomir Kit (https://github.com/pootzko)
+    # https://gist.github.com/pootzko/ac34906e11d9715d9514c75507c24dc0
+
     start = list(map(int, start_ip.split(".")))
     end = list(map(int, end_ip.split(".")))
     temp = start
@@ -29,25 +33,28 @@ def generate_ip_range(start_ip, end_ip):
     return ip_range
 
 
-def get_ip_blocks_from_xmyip(country_url=None):
-    # written by Tihomir Kit (https://github.com/pootzko)
-    # https://gist.github.com/pootzko/ac34906e11d9715d9514c75507c24dc0
+def get_ip_blocks_from_nirsoft(country_url):
     blocks = []
+
+    temp_file = tempfile.NamedTemporaryFile(mode='w+t')
+
     try:
-        html = urllib2.urlopen(country_url)
-        soup = BeautifulSoup(html, features="html.parser")
-        table = soup.body.find('div', attrs={'class': 'divTableBody'})
+        csv_file_content = urllib2.urlopen(country_url).read()
+        temp_file.write(csv_file_content)
+        temp_file.seek(0)
+        reader = csv.reader(temp_file, delimiter=',')
+        for row in reader:
+            try:
+                blocks.append(generate_ip_range(row[0], row[1]))
+            except:
+                pass
 
-        for row in table.findAll('div', attrs={'class': 'divTableRow'}):
-            cells = row.findAll('div', attrs={'class': 'divTableCell'})
-            block = extract_ip_range(cells)
-            ip_range = generate_ip_range(block[0], block[1])
-            blocks.append(ip_range)
-
-    except ValueError, ex:
-        raise Exception(ex.message)
     except urllib2.URLError, ex:
         raise Exception(ex.reason)
+    except Exception, e:
+        raise e
+    finally:
+        temp_file.close()
 
     return blocks
 

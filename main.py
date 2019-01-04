@@ -5,11 +5,11 @@ import sys
 
 import configparser
 
-from helpers.functions import get_url_from_name, get_ip_blocks_from_xmyip, count_ip_address
+from helpers.functions import get_url_from_name, get_ip_blocks_from_nirsoft, count_ip_address
 from labels import *
 
 CONFIG_FILE = 'settings.ini'
-XMyIP_DOMAIN = 'www.xmyip.com'
+NirSoft_DOMAIN = 'www.nirsoft.net'
 
 
 def should_continue(blocks, total):
@@ -39,8 +39,8 @@ if __name__ == '__main__':
     blocks = []
 
     if args.country:
-        country_url = get_url_from_name(XMyIP_DOMAIN, args.country)
-        blocks = get_ip_blocks_from_xmyip(country_url)
+        country_url = get_url_from_name(NirSoft_DOMAIN, args.country)
+        blocks = get_ip_blocks_from_nirsoft(country_url)
 
     total = count_ip_address(blocks)
 
