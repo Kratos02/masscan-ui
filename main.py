@@ -5,10 +5,14 @@ import sys
 
 import configparser
 
-from helpers.functions import get_url_from_name, get_ip_blocks_from_nirsoft, count_ip_address
+from helpers.functions import get_url_from_name, get_ip_blocks_from_nirsoft, count_ip_address, \
+    generate_masscan_settings, write_massscan_config_files
 from labels import *
 
 CONFIG_FILE = 'settings.ini'
+MASSCAN_SETTINGS_PATH = 'scans'
+MASSCAN_SETTINGS_RESULTS = 'results'
+
 NirSoft_DOMAIN = 'www.nirsoft.net'
 
 
@@ -17,7 +21,9 @@ def should_continue(blocks, total):
 
 
 def validate_settings(config):
-    return os.path.exists(config['DEFAULT']['masscan']) and config['DEFAULT']['masscan'] > 0
+    return os.path.exists(config.get('default','masscan')) and \
+           config.get('default','rate') > 0 and \
+           len(config.get('default','ports').split(',')) > 0
 
 
 if __name__ == '__main__':
@@ -28,7 +34,7 @@ if __name__ == '__main__':
         print "Settings are not valid."
         sys.exit(-1)
 
-    masscan = config['DEFAULT']['masscan']
+    masscan = config.get('default','masscan')
 
     parser = argparse.ArgumentParser(description='Mass scanning a whole country.')
     parser.add_argument('--country', help='Country')
@@ -45,7 +51,17 @@ if __name__ == '__main__':
     total = count_ip_address(blocks)
 
     if not should_continue(blocks, total):
-        print "No IP was found."
+        print NO_IP_WAS_FOUND
         sys.exit(-1)
 
     print TOTAL_IP_COUNTS.format(total)
+
+    current_path = os.path.dirname(os.path.realpath(__file__))
+
+    masscan_settings = generate_masscan_settings(blocks,
+                                                 config.getfloat('default','rate'),
+                                                 config.get('default','ports'),
+                                                 "{}/{}".format(current_path, MASSCAN_SETTINGS_RESULTS),
+                                                 config.getboolean('default','banners'))
+
+    scan_created = write_massscan_config_files(masscan_settings, "{}/{}".format(current_path, MASSCAN_SETTINGS_PATH))

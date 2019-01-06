@@ -1,3 +1,4 @@
+import os
 import tempfile
 import urllib2
 
@@ -64,3 +65,55 @@ def count_ip_address(blocks):
     for block in blocks:
         count += len(block)
     return count
+
+
+def generate_masscan_settings(blocks, rate, ports, destination, banners = True):
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+
+    settings = []
+    output_format = "json"
+    output_status = "all"
+
+    count = 0
+    for block in blocks:
+        start =  block[0]
+        end = block[len(block) - 1]
+        range = "{}-{}".format(start, end)
+        config = "rate = {}\n".format(int(rate))
+        config += "output-format = {}\n".format(output_format)
+        config += "output-status = {}\n".format(output_status)
+
+        output_filename = "{}/{}.json".format(destination, str(count))
+        config += "output-filename = {}\n".format(output_filename)
+
+        config += "ports = {}\n".format(str(ports))
+        config += "range = {}\n".format(range)
+
+        if banners:
+            config += "banners = true\n"
+
+        settings.append(config)
+
+        count += 1
+
+    return settings
+
+def write_massscan_config_files(settings, destination):
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+
+    count = 0
+    for config in settings:
+        filename = "{}/{}.conf".format(destination, str(count))
+        try:
+            with open(filename,"w+") as f:
+                f.write(config)
+                f.close()
+        except Exception, e:
+            raise e
+        count += 1
+
+    path, dirs, files = next(os.walk(destination))
+
+    return len(files) == len(settings)
