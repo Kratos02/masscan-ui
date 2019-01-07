@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+import json
 import os.path
 import sys
 
@@ -8,6 +9,8 @@ import configparser
 from helpers.functions import get_url_from_name, get_ip_blocks_from_nirsoft, count_ip_address, \
     generate_masscan_settings, write_massscan_config_files
 from labels import *
+from helpers.masscan.parsers.json import parse as masscan_parser
+from helpers.masscan.parsers.json import transform as masscan_translator
 
 CONFIG_FILE = 'settings.ini'
 MASSCAN_SETTINGS_PATH = 'scans'
@@ -21,12 +24,21 @@ def should_continue(blocks, total):
 
 
 def validate_settings(config):
-    return os.path.exists(config.get('default','masscan')) and \
-           config.get('default','rate') > 0 and \
-           len(config.get('default','ports').split(',')) > 0
+    return os.path.exists(config.get('default', 'masscan')) and \
+           config.get('default', 'rate') > 0 and \
+           len(config.get('default', 'ports').split(',')) > 0
 
 
 if __name__ == '__main__':
+    """
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    test = "{}/{}/0.json".format(current_path, MASSCAN_SETTINGS_RESULTS)
+
+    with open(test) as data_file:
+        data = json.loads(data_file.read())
+
+    results = masscan_translator(masscan_parser(data))
+    """
     config = configparser.ConfigParser()
     config.read('settings.ini')
 
@@ -34,7 +46,7 @@ if __name__ == '__main__':
         print "Settings are not valid."
         sys.exit(-1)
 
-    masscan = config.get('default','masscan')
+    masscan = config.get('default', 'masscan')
 
     parser = argparse.ArgumentParser(description='Mass scanning a whole country.')
     parser.add_argument('--country', help='Country')
@@ -59,9 +71,9 @@ if __name__ == '__main__':
     current_path = os.path.dirname(os.path.realpath(__file__))
 
     masscan_settings = generate_masscan_settings(blocks,
-                                                 config.getfloat('default','rate'),
-                                                 config.get('default','ports'),
+                                                 config.getfloat('default', 'rate'),
+                                                 config.get('default', 'ports'),
                                                  "{}/{}".format(current_path, MASSCAN_SETTINGS_RESULTS),
-                                                 config.getboolean('default','banners'))
+                                                 config.getboolean('default', 'banners'))
 
     scan_created = write_massscan_config_files(masscan_settings, "{}/{}".format(current_path, MASSCAN_SETTINGS_PATH))
