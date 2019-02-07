@@ -33,7 +33,8 @@ async def home(request):
             {
                 'filename': result,
                 'timestamp': datetime.datetime.fromtimestamp(info.st_birthtime),
-                'targets': len(targets)
+                'targets': len(targets),
+                '_link': '/details/{}'.format(result)
             }
         )
 
