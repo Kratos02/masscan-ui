@@ -1,6 +1,7 @@
 import os
 import tempfile
-import urllib2
+from urllib.error import URLError
+from urllib.request import urlopen
 
 import csv
 
@@ -40,7 +41,7 @@ def get_ip_blocks_from_nirsoft(country_url):
     temp_file = tempfile.NamedTemporaryFile(mode='w+t')
 
     try:
-        csv_file_content = urllib2.urlopen(country_url).read()
+        csv_file_content = urlopen(country_url).read()
         temp_file.write(csv_file_content)
         temp_file.seek(0)
         reader = csv.reader(temp_file, delimiter=',')
@@ -50,9 +51,9 @@ def get_ip_blocks_from_nirsoft(country_url):
             except:
                 pass
 
-    except urllib2.URLError, ex:
+    except URLError as ex:
         raise Exception(ex.reason)
-    except Exception, e:
+    except Exception as e:
         raise e
     finally:
         temp_file.close()
@@ -110,7 +111,7 @@ def write_massscan_config_files(settings, destination):
             with open(filename,"w+") as f:
                 f.write(config)
                 f.close()
-        except Exception, e:
+        except Exception as e:
             raise e
         count += 1
 

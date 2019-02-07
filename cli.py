@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import argparse
-import json
 import os.path
 import sys
 
@@ -9,8 +8,6 @@ import configparser
 from helpers.functions import get_url_from_name, get_ip_blocks_from_nirsoft, count_ip_address, \
     generate_masscan_settings, write_massscan_config_files
 from labels import *
-from helpers.masscan.parsers.json import parse as masscan_parser
-from helpers.masscan.parsers.json import transform as masscan_translator
 
 CONFIG_FILE = 'settings.ini'
 MASSCAN_SETTINGS_PATH = 'scans'
@@ -43,7 +40,7 @@ if __name__ == '__main__':
     config.read('settings.ini')
 
     if not validate_settings(config):
-        print "Settings are not valid."
+        print("Settings are not valid.")
         sys.exit(-1)
 
     masscan = config.get('default', 'masscan')
@@ -63,10 +60,10 @@ if __name__ == '__main__':
     total = count_ip_address(blocks)
 
     if not should_continue(blocks, total):
-        print NO_IP_WAS_FOUND
+        print(NO_IP_WAS_FOUND)
         sys.exit(-1)
 
-    print TOTAL_IP_COUNTS.format(total)
+    print(TOTAL_IP_COUNTS.format(total))
 
     current_path = os.path.dirname(os.path.realpath(__file__))
 
