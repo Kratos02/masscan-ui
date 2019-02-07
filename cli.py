@@ -21,9 +21,9 @@ def should_continue(blocks, total):
 
 
 def validate_settings(config):
-    return os.path.exists(config.get('default', 'masscan')) and \
-           config.get('default', 'rate') > 0 and \
-           len(config.get('default', 'ports').split(',')) > 0
+    return os.path.exists(config.get('scanner', 'masscan')) and \
+           config.get('scanner', 'rate') > 0 and \
+           len(config.get('scanner', 'ports').split(',')) > 0
 
 
 if __name__ == '__main__':
