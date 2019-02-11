@@ -7,13 +7,15 @@ import configparser
 
 from helpers.functions import get_url_from_name, get_ip_blocks_from_nirsoft, count_ip_address, \
     generate_masscan_settings, write_massscan_config_files
-from labels import *
 
 CONFIG_FILE = 'settings.ini'
 MASSCAN_SETTINGS_PATH = 'scans'
 MASSCAN_SETTINGS_RESULTS = 'results'
 
 NirSoft_DOMAIN = 'www.nirsoft.net'
+
+NO_IP_WAS_FOUND = 'No IP was found'
+TOTAL_IP_COUNTS = 'TOTAL OF IP FOUND: {:,}'
 
 
 def should_continue(blocks, total):
