@@ -1,11 +1,11 @@
+import configparser
 import datetime
 import json
+from os import listdir, path, stat
+from os.path import isfile, join
 
 from sanic import Sanic
 from sanic.response import json as s_json
-import configparser
-from os import listdir, path, stat
-from os.path import isfile, join
 
 app = Sanic()
 
