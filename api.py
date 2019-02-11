@@ -2,7 +2,7 @@ import configparser
 import datetime
 import json
 from os import listdir, path, stat
-from os.path import isfile, join
+from os.path import isfile, join, exists
 
 from sanic import Sanic
 from sanic.response import json as s_json
@@ -15,6 +15,10 @@ async def home(request):
     current_path = path.dirname(path.abspath(__file__))
     results_path = 'results'
     absolute_path = path.join(current_path, results_path)
+
+    if not exists(absolute_path):
+         return s_json({'summary': {}, 'details': {}})
+
     files = [f for f in listdir(path=absolute_path) if isfile(join(results_path, f))]
 
     details = []
