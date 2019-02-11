@@ -7,6 +7,8 @@ from os.path import isfile, join, exists
 from sanic import Sanic
 from sanic.response import json as s_json
 
+from helpers.masscan import get_ip_list
+
 app = Sanic()
 
 
@@ -51,10 +53,10 @@ async def integer_handler(request, file):
     results_path = 'results'
     absolute_path = path.join(current_path, results_path)
     file_path = path.join(absolute_path, file)
-    with open(file_path) as f:
-        data = json.load(f)
 
-    return s_json({'file': data[0]})
+    list_of_ip = get_ip_list(file_path)
+
+    return s_json(list_of_ip)
 
 
 if __name__ == '__main__':
