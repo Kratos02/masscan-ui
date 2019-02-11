@@ -1,22 +1,12 @@
-import configparser
 import datetime
 import json
 from os import listdir, path, stat
 from os.path import isfile, join, exists
 
-from sanic import Sanic
 from sanic.response import json as s_json
 
-from helpers.masscan import get_ip_list, get_results_by_ip
-
-app = Sanic()
-
-
-def get_results_path():
-    current_path = path.dirname(path.abspath(__file__))
-    results_path = 'results'
-    absolute_path = path.join(current_path, results_path)
-    return absolute_path
+from api import app
+from api.logic import get_ip_list, get_results_by_ip, get_results_path
 
 
 @app.route('/', methods=['GET'])
@@ -87,10 +77,3 @@ async def file_details_handler(request, file):
     for ip in targets:
         results[ip] = get_results_by_ip(data, ip)
     return s_json(results)
-
-
-if __name__ == '__main__':
-    settings = configparser.ConfigParser()
-    settings.read('settings.ini')
-
-    app.run(host='0.0.0.0', port=settings.get('api', 'port'))

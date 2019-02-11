@@ -29,15 +29,6 @@ def validate_settings(config):
 
 
 if __name__ == '__main__':
-    """
-    current_path = os.path.dirname(os.path.realpath(__file__))
-    test = "{}/{}/0.json".format(current_path, MASSCAN_SETTINGS_RESULTS)
-
-    with open(test) as data_file:
-        data = json.loads(data_file.read())
-
-    results = masscan_translator(masscan_parser(data))
-    """
     config = configparser.ConfigParser()
     config.read('settings.ini')
 

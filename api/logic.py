@@ -1,6 +1,14 @@
-import json
 from socket import inet_aton
 import struct
+
+from os import path
+
+
+def get_results_path():
+    current_path = path.dirname(path.abspath(__file__))
+    results_path = '../results'
+    absolute_path = path.join(current_path, results_path)
+    return absolute_path
 
 
 def get_ip_list(data):
