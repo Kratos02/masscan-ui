@@ -60,6 +60,9 @@ async def home(request):
 async def ip_details_handler(request, file, ip):
     file_path = path.join(get_results_path(), file)
 
+    if not exists(file_path):
+        return s_json({})
+
     with open(file_path) as f:
         data = json.load(f)
 
@@ -69,6 +72,9 @@ async def ip_details_handler(request, file, ip):
 @app.route('/details/<file:string>', methods=['GET'])
 async def file_details_handler(request, file):
     file_path = path.join(get_results_path(), file)
+
+    if not exists(file_path):
+        return s_json({})
 
     with open(file_path) as f:
         data = json.load(f)
