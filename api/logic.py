@@ -1,7 +1,51 @@
-from socket import inet_aton
+import datetime
+import json
 import struct
-
+from os import listdir, stat
 from os import path
+from os.path import isfile, join
+from socket import inet_aton
+
+
+def analyze_results_files(files, absolute_path):
+    open_ports = 0
+    closed_ports = 0
+
+    details = []
+    for result in files:
+        _open_ports = 0
+        _closed_ports = 0
+
+        file_path = path.join(absolute_path, result)
+        info = stat(file_path)
+        with open(file_path) as f:
+            data = json.load(f)
+            targets = get_ip_list(data)
+
+            for ip in targets:
+                for record in get_results_by_ip(data, ip):
+                    if record.get("status") == "closed":
+                        closed_ports += 1
+                        _closed_ports += 1
+                    else:
+                        open_ports += 1
+                        _open_ports += 1
+
+            details.append(
+                {
+                    'filename': result,
+                    'timestamp': datetime.datetime.fromtimestamp(info.st_birthtime),
+                    'targets': len(targets),
+                    '_link': '/details/{}'.format(result),
+                    'open': _open_ports, 'closed': _closed_ports
+                }
+            )
+
+    return {'results': len(files), "open": open_ports, "closed": closed_ports}, details
+
+
+def get_results_files(absolute_path):
+    return [f for f in listdir(path=absolute_path) if isfile(join(absolute_path, f))]
 
 
 def get_results_path():

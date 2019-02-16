@@ -43,7 +43,7 @@
                     <h4 class="my-0 font-weight-normal">XML Files</h4>
                 </div>
                 <div class="card-body">
-                    <h1 class="card-title pricing-card-title">53</h1>
+                    <h1 class="card-title pricing-card-title">{{ summary.results }}</h1>
                 </div>
             </div>
             <div class="card mb-4 shadow-sm">
@@ -51,7 +51,7 @@
                     <h4 class="my-0 font-weight-normal">Open</h4>
                 </div>
                 <div class="card-body">
-                    <h1 class="card-title pricing-card-title">374</h1>
+                    <h1 class="card-title pricing-card-title">{{ summary.open }}</h1>
                 </div>
             </div>
             <div class="card mb-4 shadow-sm">
@@ -59,7 +59,7 @@
                     <h4 class="my-0 font-weight-normal">Closed</h4>
                 </div>
                 <div class="card-body">
-                    <h1 class="card-title pricing-card-title">934</h1>
+                    <h1 class="card-title pricing-card-title">{{ summary.closed }}</h1>
                 </div>
             </div>
         </div>
@@ -76,24 +76,17 @@
                 </tr>
             </thead>
             <tbody>
+                {% for file in details %}
                 <tr>
                     <th scope="row"></th>
-                    <td>0.json</td>
-                    <td>1550003301</td>
-                    <td>99</td>
-                    <td>67</td>
-                    <td>99</td>
-                    <td><a href="#" class="btn btn-primary btn-sm">View</a></td>
+                    <td>{{ file.filename }}</td>
+                    <td>{{ file.timestamp.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ file.targets }}</td>
+                    <td>{{ file.open }}</td>
+                    <td>{{ file.closed }}</td>
+                    <td><a href="{{ file._link }}" class="btn btn-primary btn-sm">View</a></td>
                 </tr>
-                <tr>
-                     <th scope="row"></th>
-                    <td>1.json</td>
-                    <td>1550095724</td>
-                    <td>96</td>
-                    <td>64</td>
-                    <td>39</td>
-                    <td><a href="#" class="btn btn-primary btn-sm">View</a></td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
