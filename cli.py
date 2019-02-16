@@ -24,7 +24,7 @@ def should_continue(blocks, total):
 
 def validate_settings(config):
     return os.path.exists(config.get('scanner', 'masscan')) and \
-           config.get('scanner', 'rate') > 0 and \
+           int(config.get('scanner', 'rate')) > 0 and \
            len(config.get('scanner', 'ports').split(',')) > 0
 
 
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         print("Settings are not valid.")
         sys.exit(-1)
 
-    masscan = config.get('default', 'masscan')
+    masscan = config.get('scanner', 'masscan')
 
     parser = argparse.ArgumentParser(description='Mass scanning a whole country.')
     parser.add_argument('--country', help='Country')
@@ -61,9 +61,9 @@ if __name__ == '__main__':
     current_path = os.path.dirname(os.path.realpath(__file__))
 
     masscan_settings = generate_masscan_settings(blocks,
-                                                 config.getfloat('default', 'rate'),
-                                                 config.get('default', 'ports'),
+                                                 config.getfloat('scanner', 'rate'),
+                                                 config.get('scanner', 'ports'),
                                                  "{}/{}".format(current_path, MASSCAN_SETTINGS_RESULTS),
-                                                 config.getboolean('default', 'banners'))
+                                                 config.getboolean('scanner', 'banners'))
 
     scan_created = write_massscan_config_files(masscan_settings, "{}/{}".format(current_path, MASSCAN_SETTINGS_PATH))

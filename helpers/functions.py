@@ -36,12 +36,14 @@ def generate_ip_range(start_ip, end_ip):
 
 
 def get_ip_blocks_from_nirsoft(country_url):
+    import requests
+
     blocks = []
 
     temp_file = tempfile.NamedTemporaryFile(mode='w+t')
 
     try:
-        csv_file_content = urlopen(country_url).read()
+        csv_file_content = requests.get(country_url).text
         temp_file.write(csv_file_content)
         temp_file.seek(0)
         reader = csv.reader(temp_file, delimiter=',')
