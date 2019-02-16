@@ -5,7 +5,8 @@ from os.path import exists
 from sanic.response import html as sanic_html, json as sanic_json
 
 from api import app, template_env
-from api.logic import get_ip_list, get_results_by_ip, get_results_path, get_results_files, analyze_results_files
+from api.logic import get_ip_list, get_results_by_ip, get_results_path, get_results_files, analyze_results_files, \
+    summarize_details
 
 
 @app.route('/', methods=['GET'])
@@ -25,9 +26,10 @@ async def file_details(request, file):
     with open(file_path) as f:
         data = json.load(f)
     results = []
-    targets = get_ip_list(data)
-    for ip in targets:
+    for ip in  get_ip_list(data):
         results.append({'ip': ip, 'details': get_results_by_ip(data, ip)})
+
+    summary = summarize_details(results)
 
     template = template_env.get_template("details.html")
     rendered_template = await template.render_async(results=results)

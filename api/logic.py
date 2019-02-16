@@ -5,6 +5,7 @@ from os import listdir, stat
 from os import path
 from os.path import isfile, join
 from socket import inet_aton
+from itertools import groupby
 
 
 def analyze_results_files(files, absolute_path):
@@ -98,3 +99,26 @@ def is_record_in_results(record, results):
         if item.get("port") == record.get("port"):
             return True
     return False
+
+
+def summarize_details(details):
+    ports = []
+    open_ports = []
+    closed_ports = []
+
+    frequency = {}
+    status_frequency = {}
+    for result in details:
+        for entry in result.get('details'):
+            port = entry.get('port')
+            if entry.get('status') == 'open':
+                open_ports.append(port)
+            else:
+                closed_ports.append(port)
+            ports.append(port)
+
+    for port in ports:
+        frequency[port] = ports.count(port)
+        status_frequency[port] = {'open': open_ports.count(port), 'closed': closed_ports.count(port)}
+
+    return {'frequency': frequency, 'open': len(open_ports), 'closed': len(closed_ports), 'status': status_frequency}
