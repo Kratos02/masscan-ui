@@ -7,7 +7,6 @@ import configparser
 
 from helpers.functions import get_url_from_name, get_ip_blocks_from_nirsoft, count_ip_address, \
     generate_masscan_settings, write_massscan_config_files
-from labels import *
 
 CONFIG_FILE = 'settings.ini'
 MASSCAN_SETTINGS_PATH = 'scans'
@@ -15,27 +14,21 @@ MASSCAN_SETTINGS_RESULTS = 'results'
 
 NirSoft_DOMAIN = 'www.nirsoft.net'
 
+NO_IP_WAS_FOUND = 'No IP was found'
+TOTAL_IP_COUNTS = 'TOTAL OF IP FOUND: {:,}'
+
 
 def should_continue(blocks, total):
     return total != 0
 
 
 def validate_settings(config):
-    return os.path.exists(config.get('default', 'masscan')) and \
-           config.get('default', 'rate') > 0 and \
-           len(config.get('default', 'ports').split(',')) > 0
+    return os.path.exists(config.get('scanner', 'masscan')) and \
+           config.get('scanner', 'rate') > 0 and \
+           len(config.get('scanner', 'ports').split(',')) > 0
 
 
 if __name__ == '__main__':
-    """
-    current_path = os.path.dirname(os.path.realpath(__file__))
-    test = "{}/{}/0.json".format(current_path, MASSCAN_SETTINGS_RESULTS)
-
-    with open(test) as data_file:
-        data = json.loads(data_file.read())
-
-    results = masscan_translator(masscan_parser(data))
-    """
     config = configparser.ConfigParser()
     config.read('settings.ini')
 
