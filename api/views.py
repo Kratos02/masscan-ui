@@ -32,7 +32,7 @@ async def file_details(request, file):
     summary = summarize_details(results)
 
     template = template_env.get_template("details.html")
-    rendered_template = await template.render_async(results=results)
+    rendered_template = await template.render_async(results=results, summary=summary)
 
     return sanic_html(rendered_template)
 
